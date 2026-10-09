@@ -45,7 +45,7 @@
     font: 400 17px/1.4 var(--sans);
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
-  main { max-width: 96rem; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
+  main { max-width: 100rem; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
 
   h1 { font: 700 2.1rem/1 var(--cond); margin: 0 0 .3rem; letter-spacing: .005em; }
   #meta { margin: 0 0 .8rem; color: var(--muted); font-size: .95rem; min-height: 1.4em; }
@@ -72,7 +72,7 @@
   .games {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-    column-gap: 1.75rem;
+    column-gap: 1.25rem;
   }
   .game { position: relative; padding: .5rem 0 .45rem; border-bottom: 1px solid var(--rule); }
   .team {
@@ -82,7 +82,7 @@
   .team.local { border-left-color: var(--turf); }
   .name { font-weight: 500; }
   .team.win .name { font-weight: 600; }
-  .at { margin-right: .3rem; color: var(--muted); font-size: .85rem; font-weight: 400; }
+  .at { margin-right: .25rem; color: var(--muted); font-size: .85rem; font-weight: 400; }
   .rec { margin-left: .4rem; color: var(--muted); font-size: .8rem; }
   .score {
     font: 700 1.65rem/1.05 var(--cond); font-variant-numeric: tabular-nums;
@@ -91,7 +91,7 @@
   .team.win .score { color: var(--win); }
 
   /* Games not played yet: show the kickoff time once, centered on the right. */
-  .game.upcoming .team { padding-right: 4.2rem; }
+  .game.upcoming .team { padding-right: 3.8rem; }
   .when {
     position: absolute; right: 0; top: 50%; transform: translateY(-50%);
     font: 600 1.2rem/1 var(--cond); white-space: nowrap;
