@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Local Scores">
-<title>Jefferson County football scores</title>
+<title>Jefferson County area football scores</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%88%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,15 +45,15 @@
     font: 400 17px/1.4 var(--sans);
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
-  main { max-width: 34rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+  main { max-width: 72rem; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
 
-  h1 { font: 700 2.4rem/1 var(--cond); margin: 0 0 .35rem; letter-spacing: .005em; }
-  #meta { margin: 0 0 1rem; color: var(--muted); font-size: .95rem; min-height: 1.4em; }
+  h1 { font: 700 2.1rem/1 var(--cond); margin: 0 0 .3rem; letter-spacing: .005em; }
+  #meta { margin: 0 0 .8rem; color: var(--muted); font-size: .95rem; min-height: 1.4em; }
 
-  .seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; }
+  .seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 8px; overflow: hidden; margin-bottom: .9rem; }
   .seg button {
     font: 500 .95rem var(--sans); color: var(--ink); background: transparent;
-    border: 0; padding: .55rem .95rem; cursor: pointer; min-height: 44px;
+    border: 0; padding: .5rem .95rem; cursor: pointer; min-height: 44px;
   }
   .seg button + button { border-left: 1.5px solid var(--ink); }
   .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
@@ -61,44 +61,62 @@
 
   h2.day {
     position: sticky; top: 0; z-index: 1;
-    margin: 0; padding: .6rem 0 .35rem;
+    margin: 0; padding: .5rem 0 .3rem;
     background: var(--bg);
-    font: 600 1.4rem/1.1 var(--cond);
+    font: 600 1.3rem/1.1 var(--cond);
     border-bottom: 2px solid var(--ink);
   }
-  .game { padding: .8rem 0 .7rem; border-bottom: 1px solid var(--rule); }
+  section { margin-bottom: .6rem; }
+
+  /* As many columns as fit; one column on a narrow phone. */
+  .games {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    column-gap: 1.75rem;
+  }
+  .game { position: relative; padding: .5rem 0 .45rem; border-bottom: 1px solid var(--rule); }
   .team {
-    display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: .75rem;
-    padding-left: .6rem; border-left: 4px solid transparent;
+    display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: .6rem;
+    padding-left: .55rem; border-left: 4px solid transparent; line-height: 1.3;
   }
   .team.local { border-left-color: var(--turf); }
   .name { font-weight: 500; }
   .team.win .name { font-weight: 600; }
-  .rec { margin-left: .45rem; color: var(--muted); font-size: .85rem; }
+  .at { margin-right: .3rem; color: var(--muted); font-size: .85rem; font-weight: 400; }
+  .rec { margin-left: .4rem; color: var(--muted); font-size: .8rem; }
   .score {
-    font: 700 2.1rem/1.1 var(--cond); font-variant-numeric: tabular-nums;
+    font: 700 1.65rem/1.05 var(--cond); font-variant-numeric: tabular-nums;
     color: var(--muted); min-width: 2ch; text-align: right;
   }
   .team.win .score { color: var(--win); }
-  .status { margin: .3rem 0 0 .6rem; color: var(--muted); font-size: .9rem; }
-  .status.live { color: var(--lights); font-weight: 500; }
-  .status.live::before {
+
+  /* Games not played yet: show the kickoff time once, centered on the right. */
+  .game.upcoming .team { padding-right: 4.6rem; }
+  .when {
+    position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+    font: 600 1.2rem/1 var(--cond); white-space: nowrap;
+  }
+  .when.txt { font: 500 .85rem/1.15 var(--sans); white-space: normal; max-width: 4.4rem; text-align: right; }
+
+  .note { margin: .1rem 0 0 .55rem; color: var(--muted); font-size: .85rem; }
+  .note.live { color: var(--lights); font-weight: 500; }
+  .note.live::before {
     content: ""; display: inline-block; width: .55rem; height: .55rem; border-radius: 50%;
     background: var(--lights); margin-right: .45rem; vertical-align: .05rem;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .status.live::before { animation: pulse 1.6s ease-in-out infinite; }
+    .note.live::before { animation: pulse 1.6s ease-in-out infinite; }
     @keyframes pulse { 50% { opacity: .35; } }
   }
   .empty { color: var(--muted); padding: 1rem 0; }
-  footer { margin-top: 2rem; color: var(--muted); font-size: .85rem; max-width: 30rem; }
+  footer { margin-top: 1.5rem; color: var(--muted); font-size: .85rem; max-width: 40rem; }
   footer a { color: inherit; }
 </style>
 </head>
 <body>
 <main>
   <header>
-    <h1>Jefferson County football</h1>
+    <h1>Jefferson County area football</h1>
     <p id="meta" aria-live="polite">Loading scores...</p>
     <div class="seg" role="group" aria-label="Which games to show">
       <button type="button" data-f="all" aria-pressed="true">All nearby</button>
@@ -164,30 +182,35 @@
     return new Date(y, m - 1, d).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
   }
 
-  function teamRow(t, win) {
-    const row = h("div", "team" + (t.county === "Jefferson" ? " local" : "") + (win ? " win" : ""));
+  function teamRow(t, opts) {
+    const row = h("div", "team" + (t.county === "Jefferson" ? " local" : "") + (opts.win ? " win" : ""));
     const left = h("span");
+    if (opts.home) left.append(h("span", "at", "at"));
     left.append(h("span", "name", t.name));
     if (t.record) left.append(h("span", "rec", t.record));
-    row.append(left, h("span", "score", t.score == null ? "\u2013" : String(t.score)));
+    row.append(left);
+    if (opts.scores) row.append(h("span", "score", t.score == null ? "\u2013" : String(t.score)));
     return row;
   }
 
-  function statusText(g) {
-    if (g.status === "final") return g.outcome || "Final";
-    if (g.status === "score_entered") return "Score posted, not final";
-    const t = timeOf(g.kickoff);
-    if (t) return `${t.label} at ${g.home.name}`;
-    return g.kickoff || `at ${g.home.name}`;
-  }
-
   function gameEl(g) {
-    const el = h("article", "game");
+    const upcoming = g.status === "scheduled";
+    const el = h("article", "game" + (upcoming ? " upcoming" : ""));
     const decided = g.status === "final" && g.away.score != null && g.home.score != null && g.away.score !== g.home.score;
     const awayWins = decided && g.away.score > g.home.score;
     const homeWins = decided && g.home.score > g.away.score;
-    el.append(teamRow(g.away, awayWins), teamRow(g.home, homeWins));
-    el.append(h("p", "status" + (g.status === "score_entered" ? " live" : ""), statusText(g)));
+    el.append(
+      teamRow(g.away, { win: awayWins, scores: !upcoming }),
+      teamRow(g.home, { win: homeWins, scores: !upcoming, home: true })
+    );
+    if (upcoming) {
+      const t = timeOf(g.kickoff);
+      el.append(h("span", "when" + (t ? "" : " txt"), t ? t.label : (g.kickoff || "TBD")));
+    } else if (g.status === "score_entered") {
+      el.append(h("p", "note live", "Score posted, not final"));
+    } else if (g.outcome && !/^final$/i.test(g.outcome)) {
+      el.append(h("p", "note", g.outcome)); // e.g. "Final (1 OT)" or "Forfeit"
+    }
     return el;
   }
 
@@ -211,15 +234,17 @@
       a.g.date_iso < b.g.date_iso ? -1 : a.g.date_iso > b.g.date_iso ? 1 :
       rank(a.g) - rank(b.g) || a.i - b.i);
 
-    let day = null, section = null;
+    let day = null, grid = null;
     for (const { g } of items) {
       if (g.date_iso !== day) {
         day = g.date_iso;
-        section = h("section");
+        const section = h("section");
         section.append(h("h2", "day", dayLabel(day)));
+        grid = h("div", "games");
+        section.append(grid);
         box.append(section);
       }
-      section.append(gameEl(g));
+      grid.append(gameEl(g));
     }
   }
 
