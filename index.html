@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F2F4EF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1A2B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Local Scores">
+<title>Jefferson County football scores</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%88%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F2F4EF;      /* chalk */
+    --ink: #15221B;
+    --muted: #5B6A60;
+    --rule: #D2DACF;
+    --turf: #1D6B3F;    /* Jefferson County marker */
+    --win: #1D6B3F;     /* winning score */
+    --lights: #B57A00;  /* score posted, not final */
+    --sans: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --cond: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0E1A2B;    /* night game */
+      --ink: #EAF0F6;
+      --muted: #93A3B8;
+      --rule: #223652;
+      --turf: #6FD08C;
+      --win: #6FD08C;
+      --lights: #F2C14E;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.4 var(--sans);
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  main { max-width: 34rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+
+  h1 { font: 700 2.4rem/1 var(--cond); margin: 0 0 .35rem; letter-spacing: .005em; }
+  #meta { margin: 0 0 1rem; color: var(--muted); font-size: .95rem; min-height: 1.4em; }
+
+  .seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; }
+  .seg button {
+    font: 500 .95rem var(--sans); color: var(--ink); background: transparent;
+    border: 0; padding: .55rem .95rem; cursor: pointer; min-height: 44px;
+  }
+  .seg button + button { border-left: 1.5px solid var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  button:focus-visible, a:focus-visible { outline: 3px solid var(--turf); outline-offset: 2px; }
+
+  h2.day {
+    position: sticky; top: 0; z-index: 1;
+    margin: 0; padding: .6rem 0 .35rem;
+    background: var(--bg);
+    font: 600 1.4rem/1.1 var(--cond);
+    border-bottom: 2px solid var(--ink);
+  }
+  .game { padding: .8rem 0 .7rem; border-bottom: 1px solid var(--rule); }
+  .team {
+    display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: .75rem;
+    padding-left: .6rem; border-left: 4px solid transparent;
+  }
+  .team.local { border-left-color: var(--turf); }
+  .name { font-weight: 500; }
+  .team.win .name { font-weight: 600; }
+  .rec { margin-left: .45rem; color: var(--muted); font-size: .85rem; }
+  .score {
+    font: 700 2.1rem/1.1 var(--cond); font-variant-numeric: tabular-nums;
+    color: var(--muted); min-width: 2ch; text-align: right;
+  }
+  .team.win .score { color: var(--win); }
+  .status { margin: .3rem 0 0 .6rem; color: var(--muted); font-size: .9rem; }
+  .status.live { color: var(--lights); font-weight: 500; }
+  .status.live::before {
+    content: ""; display: inline-block; width: .55rem; height: .55rem; border-radius: 50%;
+    background: var(--lights); margin-right: .45rem; vertical-align: .05rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .status.live::before { animation: pulse 1.6s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .35; } }
+  }
+  .empty { color: var(--muted); padding: 1rem 0; }
+  footer { margin-top: 2rem; color: var(--muted); font-size: .85rem; max-width: 30rem; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Jefferson County football</h1>
+    <p id="meta" aria-live="polite">Loading scores...</p>
+    <div class="seg" role="group" aria-label="Which games to show">
+      <button type="button" data-f="all" aria-pressed="true">All nearby</button>
+      <button type="button" data-f="jeffco" aria-pressed="false">Jefferson County</button>
+    </div>
+  </header>
+
+  <div id="games"></div>
+  <noscript><p class="empty">This page needs JavaScript to show scores.</p></noscript>
+
+  <footer>
+    <p>Schools enter these scores themselves, so they can trail the game on the field.
+    Scores come from <a href="https://www.mshsaa.org/Activities/FootballScoreboard.aspx?alg=19">MSHSAA</a>.
+    A green bar marks a Jefferson County team.</p>
+  </footer>
+</main>
+
+<script>
+  // After you deploy the Worker, paste its address here (it ends in /scores).
+  const API_URL = "https://local-scores.obrienmd2.workers.dev/scores";
+  const REFRESH_MS = 30000;
+
+  const $ = (s) => document.querySelector(s);
+  function h(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  let data = null;
+  let error = "";
+  let busy = false;
+  let filter = readFilter();
+
+  function readFilter() {
+    try { return localStorage.getItem("filter") === "jeffco" ? "jeffco" : "all"; } catch (e) { return "all"; }
+  }
+  function saveFilter(v) {
+    try { localStorage.setItem("filter", v); } catch (e) { /* storage can be unavailable */ }
+  }
+
+  function timeOf(kickoff) {
+    const m = /(\d{1,2}):(\d{2})\s*(AM|PM)/i.exec(kickoff || "");
+    if (!m) return null;
+    let hr = parseInt(m[1], 10) % 12;
+    if (m[3].toUpperCase() === "PM") hr += 12;
+    return { label: `${m[1]}:${m[2]} ${m[3].toUpperCase()}`, minutes: hr * 60 + parseInt(m[2], 10) };
+  }
+
+  // Within a day: score-posted games first, then upcoming by kickoff, then finals.
+  function rank(g) {
+    if (g.status === "score_entered") return 0;
+    if (g.status === "scheduled") {
+      const t = timeOf(g.kickoff);
+      return 1 + (t ? t.minutes : 1439) / 10000;
+    }
+    return 2;
+  }
+
+  function dayLabel(iso) {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
+  }
+
+  function teamRow(t, win) {
+    const row = h("div", "team" + (t.county === "Jefferson" ? " local" : "") + (win ? " win" : ""));
+    const left = h("span");
+    left.append(h("span", "name", t.name));
+    if (t.record) left.append(h("span", "rec", t.record));
+    row.append(left, h("span", "score", t.score == null ? "\u2013" : String(t.score)));
+    return row;
+  }
+
+  function statusText(g) {
+    if (g.status === "final") return g.outcome || "Final";
+    if (g.status === "score_entered") return "Score posted, not final";
+    const t = timeOf(g.kickoff);
+    if (t) return `${t.label} at ${g.home.name}`;
+    return g.kickoff || `at ${g.home.name}`;
+  }
+
+  function gameEl(g) {
+    const el = h("article", "game");
+    const decided = g.status === "final" && g.away.score != null && g.home.score != null && g.away.score !== g.home.score;
+    const awayWins = decided && g.away.score > g.home.score;
+    const homeWins = decided && g.home.score > g.away.score;
+    el.append(teamRow(g.away, awayWins), teamRow(g.home, homeWins));
+    el.append(h("p", "status" + (g.status === "score_entered" ? " live" : ""), statusText(g)));
+    return el;
+  }
+
+  function render() {
+    const box = $("#games");
+    box.replaceChildren();
+    if (!data) return;
+
+    let items = data.games.map((g, i) => ({ g, i }));
+    if (filter === "jeffco") {
+      items = items.filter(({ g }) => g.away.county === "Jefferson" || g.home.county === "Jefferson");
+    }
+    if (!items.length) {
+      box.append(h("p", "empty", filter === "jeffco"
+        ? "No Jefferson County games are listed for this week yet."
+        : "No local games are listed for this week yet."));
+      return;
+    }
+
+    items.sort((a, b) =>
+      a.g.date_iso < b.g.date_iso ? -1 : a.g.date_iso > b.g.date_iso ? 1 :
+      rank(a.g) - rank(b.g) || a.i - b.i);
+
+    let day = null, section = null;
+    for (const { g } of items) {
+      if (g.date_iso !== day) {
+        day = g.date_iso;
+        section = h("section");
+        section.append(h("h2", "day", dayLabel(day)));
+        box.append(section);
+      }
+      section.append(gameEl(g));
+    }
+  }
+
+  function clock(iso) {
+    return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+
+  function setMeta() {
+    const meta = $("#meta");
+    if (!data) {
+      meta.textContent = error ? `Can't load scores: ${error}. Trying again every 30 seconds.` : "Loading scores...";
+      return;
+    }
+    const wk = /Week\s+(\d+)/i.exec(data.title || "");
+    const prefix = wk ? `Week ${wk[1]}. ` : "";
+    meta.textContent = error
+      ? `${prefix}Couldn't refresh (${error}). Showing scores from ${clock(data.generated_at)}.`
+      : `${prefix}Checked ${clock(data.generated_at)}. Refreshes every 30 seconds.`;
+  }
+
+  async function load() {
+    if (API_URL.includes("PASTE_YOUR")) {
+      $("#meta").textContent = "Set API_URL at the top of index.html to your Worker address.";
+      return;
+    }
+    if (busy) return;
+    busy = true;
+    try {
+      const res = await fetch(API_URL, { cache: "no-store" });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
+      data = body;
+      error = "";
+    } catch (e) {
+      error = e && e.name === "TypeError" ? "the scores service isn't reachable" : (e && e.message) || "unknown error";
+    } finally {
+      busy = false;
+    }
+    render();
+    setMeta();
+  }
+
+  document.querySelectorAll(".seg button").forEach((btn) => {
+    btn.setAttribute("aria-pressed", String(btn.dataset.f === filter));
+    btn.addEventListener("click", () => {
+      filter = btn.dataset.f;
+      saveFilter(filter);
+      document.querySelectorAll(".seg button").forEach((b) =>
+        b.setAttribute("aria-pressed", String(b.dataset.f === filter)));
+      render();
+    });
+  });
+
+  setInterval(() => { if (!document.hidden) load(); }, REFRESH_MS);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+  load();
+</script>
+</body>
+</html>
