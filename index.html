@@ -45,7 +45,7 @@
     font: 400 17px/1.4 var(--sans);
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
-  main { max-width: 72rem; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
+  main { max-width: 96rem; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
 
   h1 { font: 700 2.1rem/1 var(--cond); margin: 0 0 .3rem; letter-spacing: .005em; }
   #meta { margin: 0 0 .8rem; color: var(--muted); font-size: .95rem; min-height: 1.4em; }
@@ -71,7 +71,7 @@
   /* As many columns as fit; one column on a narrow phone. */
   .games {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
     column-gap: 1.75rem;
   }
   .game { position: relative; padding: .5rem 0 .45rem; border-bottom: 1px solid var(--rule); }
@@ -91,7 +91,7 @@
   .team.win .score { color: var(--win); }
 
   /* Games not played yet: show the kickoff time once, centered on the right. */
-  .game.upcoming .team { padding-right: 4.6rem; }
+  .game.upcoming .team { padding-right: 4.2rem; }
   .when {
     position: absolute; right: 0; top: 50%; transform: translateY(-50%);
     font: 600 1.2rem/1 var(--cond); white-space: nowrap;
