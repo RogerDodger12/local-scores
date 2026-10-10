@@ -48,68 +48,89 @@
   main { max-width: 100rem; margin: 0 auto; padding: 1rem 1rem 2.5rem; }
 
   h1 { font: 700 2.1rem/1 var(--cond); margin: 0 0 .3rem; letter-spacing: .005em; }
-  #meta { margin: 0 0 .8rem; color: var(--muted); font-size: .95rem; min-height: 1.4em; }
+  #meta { margin: 0 0 .9rem; color: var(--muted); font-size: .95rem; min-height: 1.4em; }
+  button:focus-visible, a:focus-visible { outline: 3px solid var(--turf); outline-offset: 2px; }
 
-  .seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 8px; overflow: hidden; margin-bottom: .9rem; }
-  .seg button {
+  /* Page layout: live scores first on a phone; schedule left and live scores right on a wide screen. */
+  .layout { display: grid; grid-template-areas: "live" "sched"; gap: 1rem 1.5rem; }
+  .live { grid-area: live; min-width: 0; }
+  #schedule { grid-area: sched; min-width: 0; }
+  @media (min-width: 64rem) {
+    .layout { grid-template-columns: minmax(0, 1fr) 20rem; grid-template-areas: "sched live"; align-items: start; }
+    .live { position: sticky; top: 1rem; }
+    .live .scorestream-widget-container { height: calc(100vh - 8rem); min-height: 26rem; max-height: 52rem; }
+  }
+
+  /* ScoreStream live scoreboard. Our own styles below are all fenced under #schedule
+     so they cannot leak into the widget. */
+  .live h2 {
+    margin: 0; padding: .5rem 0 .3rem;
+    font: 600 1.3rem/1.1 var(--cond);
+    border-bottom: 2px solid var(--ink);
+  }
+  .live .scorestream-widget-container { height: 34rem; margin-top: .6rem; }
+  .live .credit { margin: .5rem 0 0; color: var(--muted); font-size: .85rem; }
+
+  #schedule .seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 8px; overflow: hidden; margin-bottom: .9rem; }
+  #schedule .seg button {
     font: 500 .95rem var(--sans); color: var(--ink); background: transparent;
     border: 0; padding: .5rem .95rem; cursor: pointer; min-height: 44px;
   }
-  .seg button + button { border-left: 1.5px solid var(--ink); }
-  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-  button:focus-visible, a:focus-visible { outline: 3px solid var(--turf); outline-offset: 2px; }
+  #schedule .seg button + button { border-left: 1.5px solid var(--ink); }
+  #schedule .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 
-  h2.day {
+  #schedule h2.day {
     position: sticky; top: 0; z-index: 1;
     margin: 0; padding: .5rem 0 .3rem;
     background: var(--bg);
     font: 600 1.3rem/1.1 var(--cond);
     border-bottom: 2px solid var(--ink);
   }
-  section { margin-bottom: .6rem; }
+  #schedule section { margin-bottom: .6rem; }
 
   /* As many columns as fit; one column on a narrow phone. */
-  .games {
+  #schedule .games {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
     column-gap: 1.25rem;
   }
-  .game { position: relative; padding: .5rem 0 .45rem; border-bottom: 1px solid var(--rule); }
-  .team {
+  #schedule .game { position: relative; padding: .5rem 0 .45rem; border-bottom: 1px solid var(--rule); }
+  #schedule .team {
     display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: .6rem;
     padding-left: .55rem; border-left: 4px solid transparent; line-height: 1.3;
   }
-  .team.local { border-left-color: var(--turf); }
-  .name { font-weight: 500; }
-  .team.win .name { font-weight: 600; }
-  .at { margin-right: .25rem; color: var(--muted); font-size: .85rem; font-weight: 400; }
-  .rec { margin-left: .4rem; color: var(--muted); font-size: .8rem; }
-  .score {
+  #schedule .team.local { border-left-color: var(--turf); }
+  #schedule .name { font-weight: 500; }
+  #schedule .team.win .name { font-weight: 600; }
+  #schedule .at { margin-right: .25rem; color: var(--muted); font-size: .85rem; font-weight: 400; }
+  #schedule .rec { margin-left: .4rem; color: var(--muted); font-size: .8rem; }
+  #schedule .score {
     font: 700 1.65rem/1.05 var(--cond); font-variant-numeric: tabular-nums;
     color: var(--muted); min-width: 2ch; text-align: right;
   }
-  .team.win .score { color: var(--win); }
+  #schedule .team.win .score { color: var(--win); }
 
   /* Games not played yet: show the kickoff time once, centered on the right. */
-  .game.upcoming .team { padding-right: 3.8rem; }
-  .when {
+  #schedule .game.upcoming .team { padding-right: 3.8rem; }
+  #schedule .when {
     position: absolute; right: 0; top: 50%; transform: translateY(-50%);
     font: 600 1.2rem/1 var(--cond); white-space: nowrap;
   }
-  .when.txt { font: 500 .85rem/1.15 var(--sans); white-space: normal; max-width: 4.4rem; text-align: right; }
+  #schedule .when.txt { font: 500 .85rem/1.15 var(--sans); white-space: normal; max-width: 4.4rem; text-align: right; }
 
-  .note { margin: .1rem 0 0 .55rem; color: var(--muted); font-size: .85rem; }
-  .note.live { color: var(--lights); font-weight: 500; }
-  .note.live::before {
+  #schedule .note { margin: .1rem 0 0 .55rem; color: var(--muted); font-size: .85rem; }
+  #schedule .note.live { color: var(--lights); font-weight: 500; }
+  #schedule .note.live::before {
     content: ""; display: inline-block; width: .55rem; height: .55rem; border-radius: 50%;
     background: var(--lights); margin-right: .45rem; vertical-align: .05rem;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .note.live::before { animation: pulse 1.6s ease-in-out infinite; }
+    #schedule .note.live::before { animation: pulse 1.6s ease-in-out infinite; }
     @keyframes pulse { 50% { opacity: .35; } }
   }
-  .empty { color: var(--muted); padding: 1rem 0; }
-  footer { margin-top: 1.5rem; color: var(--muted); font-size: .85rem; max-width: 40rem; }
+  #schedule .empty { color: var(--muted); padding: 1rem 0; }
+  footer { margin-top: 1.5rem; color: var(--muted); font-size: .85rem; max-width: 44rem; }
+  footer p { margin: 0 0 .5rem; }
   footer a { color: inherit; }
 </style>
 </head>
@@ -118,24 +139,35 @@
   <header>
     <h1>Jefferson County area football</h1>
     <p id="meta" aria-live="polite">Loading scores...</p>
-    <div class="seg" role="group" aria-label="Which games to show">
-      <button type="button" data-f="all" aria-pressed="true">All nearby</button>
-      <button type="button" data-f="jeffco" aria-pressed="false">Jefferson County</button>
-    </div>
   </header>
 
-  <div id="games"></div>
-  <noscript><p class="empty">This page needs JavaScript to show scores.</p></noscript>
+  <div class="layout">
+    <section class="live" aria-labelledby="live-title">
+      <h2 id="live-title">Live scores</h2>
+      <div class="scorestream-widget-container" data-ss_widget_type="vertScoreboard" data-user-widget-id="70763"></div>
+      <script async="async" type="text/javascript" src="https://scorestream.com/apiJsCdn/widgets/embed.js"></script>
+      <p class="credit">Posted by fans and school staff through ScoreStream. A game nobody is reporting won't show up here.</p>
+    </section>
+
+    <div id="schedule">
+      <div class="seg" role="group" aria-label="Which games to show">
+        <button type="button" data-f="all" aria-pressed="true">All nearby</button>
+        <button type="button" data-f="jeffco" aria-pressed="false">Jefferson County</button>
+      </div>
+      <div id="games"></div>
+      <noscript><p class="empty">This page needs JavaScript to show scores.</p></noscript>
+    </div>
+  </div>
 
   <footer>
-    <p>Schools enter these scores themselves, so they can trail the game on the field.
-    Scores come from <a href="https://www.mshsaa.org/Activities/FootballScoreboard.aspx?alg=19">MSHSAA</a>.
-    A green bar marks a Jefferson County team.</p>
+    <p>The schedule and final scores come from <a href="https://www.mshsaa.org/Activities/FootballScoreboard.aspx?alg=19">MSHSAA</a>.
+    Schools enter those scores themselves, so they usually arrive after the game. A green bar marks a Jefferson County team.</p>
+    <p>Live scores come from <a href="https://scorestream.com">ScoreStream</a>.</p>
   </footer>
 </main>
 
 <script>
-  // After you deploy the Worker, paste its address here (it ends in /scores).
+  // The Worker that reads MSHSAA's scoreboard (its address ends in /scores).
   const API_URL = "https://local-scores.obrienmd2.workers.dev/scores";
   const REFRESH_MS = 30000;
 
@@ -255,21 +287,17 @@
   function setMeta() {
     const meta = $("#meta");
     if (!data) {
-      meta.textContent = error ? `Can't load scores: ${error}. Trying again every 30 seconds.` : "Loading scores...";
+      meta.textContent = error ? `Can't load the schedule: ${error}. Trying again every 30 seconds.` : "Loading the schedule...";
       return;
     }
     const wk = /Week\s+(\d+)/i.exec(data.title || "");
     const prefix = wk ? `Week ${wk[1]}. ` : "";
     meta.textContent = error
-      ? `${prefix}Couldn't refresh (${error}). Showing scores from ${clock(data.generated_at)}.`
-      : `${prefix}Checked ${clock(data.generated_at)}. Refreshes every 30 seconds.`;
+      ? `${prefix}Couldn't refresh the schedule (${error}). Showing it as of ${clock(data.generated_at)}.`
+      : `${prefix}Schedule and finals checked ${clock(data.generated_at)}. Refreshes every 30 seconds.`;
   }
 
   async function load() {
-    if (API_URL.includes("PASTE_YOUR")) {
-      $("#meta").textContent = "Set API_URL at the top of index.html to your Worker address.";
-      return;
-    }
     if (busy) return;
     busy = true;
     try {
