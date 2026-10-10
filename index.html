@@ -51,24 +51,16 @@
   #meta { margin: 0 0 .9rem; color: var(--muted); font-size: .95rem; min-height: 1.4em; }
   button:focus-visible, a:focus-visible { outline: 3px solid var(--turf); outline-offset: 2px; }
 
-  /* Page layout: live scores first on a phone; schedule left and live scores right on a wide screen. */
-  .layout { display: grid; grid-template-areas: "live" "sched"; gap: 1rem 1.5rem; }
-  .live { grid-area: live; min-width: 0; }
-  #schedule { grid-area: sched; min-width: 0; }
-  @media (min-width: 64rem) {
-    .layout { grid-template-columns: minmax(0, 1fr) 20rem; grid-template-areas: "sched live"; align-items: start; }
-    .live { position: sticky; top: 1rem; }
-    .live .scorestream-widget-container { height: calc(100vh - 8rem); min-height: 26rem; max-height: 52rem; }
-  }
-
-  /* ScoreStream live scoreboard. Our own styles below are all fenced under #schedule
-     so they cannot leak into the widget. */
+  /* Page layout: the ScoreStream live banner runs across the top, the schedule sits below it.
+     Our own list styles are all fenced under #schedule so they cannot affect the widget. */
+  .live { margin-bottom: 1.1rem; }
+  #schedule { min-width: 0; }
   .live h2 {
     margin: 0; padding: .5rem 0 .3rem;
     font: 600 1.3rem/1.1 var(--cond);
     border-bottom: 2px solid var(--ink);
   }
-  .live .scorestream-widget-container { height: 34rem; margin-top: .6rem; }
+  .live .scorestream-widget-container { min-height: 165px; margin-top: .6rem; }
   .live .credit { margin: .5rem 0 0; color: var(--muted); font-size: .85rem; }
 
   #schedule .seg { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 8px; overflow: hidden; margin-bottom: .9rem; }
@@ -143,10 +135,10 @@
 
   <div class="layout">
     <section class="live" aria-labelledby="live-title">
-      <h2 id="live-title">Live scores</h2>
-      <div class="scorestream-widget-container" data-ss_widget_type="vertScoreboard" data-user-widget-id="70763"></div>
+      <h2 id="live-title">Live: DeSoto and Festus</h2>
+      <div class="scorestream-widget-container" data-ss_widget_type="horzScoreboard" data-user-widget-id="70764"></div>
       <script async="async" type="text/javascript" src="https://scorestream.com/apiJsCdn/widgets/embed.js"></script>
-      <p class="credit">Posted by fans and school staff through ScoreStream. A game nobody is reporting won't show up here.</p>
+      <p class="credit">Posted by fans and school staff through ScoreStream. If nobody is reporting a game, it won't show up here. Every other game is in the schedule below.</p>
     </section>
 
     <div id="schedule">
